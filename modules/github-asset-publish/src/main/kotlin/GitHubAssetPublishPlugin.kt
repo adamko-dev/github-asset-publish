@@ -27,7 +27,6 @@ internal constructor(
 ) : Plugin<Project> {
 
   override fun apply(project: Project) {
-
     project.pluginManager.apply(MavenPublishPlugin::class)
 
     val publishing = project.extensions.getByType<PublishingExtension>()

@@ -11,6 +11,12 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
 }
 
+kotlin {
+  compilerOptions {
+    optIn.add("kotlin.io.path.ExperimentalPathApi")
+  }
+}
+
 gradlePlugin {
   plugins {
     create("githubAssetPublish") {

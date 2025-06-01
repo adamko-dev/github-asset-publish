@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalSerializationApi::class, ExperimentalPathApi::class)
-
 package dev.adamko.githubassetpublish.tasks
 
 import dev.adamko.githubassetpublish.internal.computeChecksum
@@ -9,8 +7,6 @@ import dev.adamko.githubassetpublish.internal.model.MutableGradleModuleMetadata.
 import java.nio.file.Path
 import javax.inject.Inject
 import kotlin.io.path.*
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.json.Json
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
@@ -79,7 +75,6 @@ internal constructor(
     sourceDir: Path,
     destinationDir: Path,
   ) {
-
     fs.sync {
       into(destinationDir)
       from(sourceDir)
@@ -183,11 +178,5 @@ internal constructor(
     }
   }
 
-  companion object {
-    private val json: Json =
-      Json {
-        prettyPrint = true
-        prettyPrintIndent = "  "
-      }
-  }
+  companion object
 }
