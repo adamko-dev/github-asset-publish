@@ -20,7 +20,9 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity.RELATIVE
 import org.gradle.api.tasks.TaskAction
+import org.gradle.work.DisableCachingByDefault
 
+@DisableCachingByDefault(because = "Only performs simple local file operations.")
 abstract class PrepareGitHubReleaseFilesTask
 @Inject
 internal constructor(
