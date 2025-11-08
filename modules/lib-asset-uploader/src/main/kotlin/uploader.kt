@@ -1,6 +1,6 @@
 @file:JvmName("Uploader")
 
-package dev.adamko.githubassetpublish.lib.upload
+package dev.adamko.githubassetpublish.lib
 
 import java.nio.file.Path
 import java.util.concurrent.TimeUnit.MINUTES
@@ -34,14 +34,14 @@ fun main(args: Array<String>) {
 
 
   /** `OWNER/REPO` */
-  val repo = getArg("repo")
-  val version = getArg("version")
+  val githubRepo = getArg("githubRepo")
+  val releaseVersion = getArg("releaseVersion")
   val releaseDir = getArg("releaseDir").let(::Path)
   val createNewReleaseIfMissing = getArg("createNewReleaseIfMissing").toBoolean()
 
   val release = FilesToUploadWithMetadata(
-    repo = repo,
-    version = version,
+    repo = githubRepo,
+    version = releaseVersion,
     releaseDir = releaseDir,
   )
 
@@ -88,7 +88,9 @@ private fun upload(
   // Check if the release exists
   if (gh.releaseView(tag = version) == null) {
     if (createNewReleaseIfMissing) {
-      gh.releaseCreate(tag = version)
+      println("Creating new release $version...")
+      val result = gh.releaseCreate(tag = version)
+      println(result)
     } else {
       error("Release $version does not exist and createNewReleaseIfMissing is false.")
     }
@@ -161,7 +163,7 @@ private abstract class CliTool(
       processOutput
     } else {
       throw ProcessException(
-        cmd = cmd,
+        cmd = args.joinToString(" "),
         exitCode = exitCode,
         processOutput = processOutput,
       )
@@ -223,20 +225,21 @@ private class GitHub(
 //  fun releaseList(tag: String): String? =
 //    runCommandOrNull("gh release view $tag --repo $repo")
 
-  fun releaseCreate(tag: String): String? =
-    runCommandOrNull(
-      """
-        gh release create $tag
-        --repo $repo
-        --verify-tag
-        --draft
-      """.trimIndent()
+  fun releaseCreate(tag: String): String =
+    runCommand(
+      buildString {
+        appendLine("gh release create $tag")
+//        appendLine("--verify-tag")
+        appendLine("--draft")
+        appendLine("--title $tag")
+        appendLine("--repo $repo")
+      }
 //        append(" --prerelease ")
 //        append(" --fail-on-no-commits ")
     )
 
-  fun releaseUpload(tag: String, files: Iterable<String>): String? =
-    runCommandOrNull(
+  fun releaseUpload(tag: String, files: Iterable<String>): String =
+    runCommand(
       buildString {
         appendLine("gh release upload $tag")
         appendLine("--repo $repo")
@@ -248,7 +251,8 @@ private class GitHub(
     runCommandOrNull("gh release view $tag --repo $repo")
 
   fun releaseListAssets(tag: String): String =
-    runCommand("gh release $tag --repo $repo --json assets --jq '.assets[].name'")
+    runCommand("gh release view $tag --repo $repo --json assets --jq .assets[].name")
+//    runCommand("gh release view $tag --repo $repo --json assets")
 
   fun releaseDeleteAsset(tag: String, assetName: String): String? =
     runCommandOrNull("gh release delete-asset $tag $assetName --repo $repo --yes")

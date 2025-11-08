@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-  implementation(projects.modules.libGmm)
+  compileOnly(projects.modules.libGmm)
 }

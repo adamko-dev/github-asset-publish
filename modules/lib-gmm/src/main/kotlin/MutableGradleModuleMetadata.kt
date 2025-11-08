@@ -3,6 +3,7 @@
 package dev.adamko.githubassetpublish.lib.internal.model
 
 import dev.adamko.githubassetpublish.lib.internal.model.GradleModuleMetadata.AttributeValue
+import dev.adamko.githubassetpublish.lib.internal.model.GradleModuleMetadata.Companion.json
 import java.nio.file.Path
 import kotlin.io.path.inputStream
 import kotlin.io.path.outputStream
@@ -10,7 +11,6 @@ import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import kotlinx.serialization.json.encodeToStream
 
@@ -132,11 +132,6 @@ data class MutableGradleModuleMetadata(
   ) : GradleModuleMetadata.ArtifactSelector
 
   companion object {
-    private val json = Json {
-      prettyPrint = true
-      prettyPrintIndent = "  "
-    }
-
     fun loadFrom(file: Path): MutableGradleModuleMetadata {
       file.inputStream().use { source ->
         return json.decodeFromStream(serializer(), source)

@@ -23,8 +23,9 @@ include(
   ":modules:gradle-plugin-publisher",
   ":modules:gradle-plugin-repository",
   ":modules:lib-asset-uploader",
+  ":modules:lib-asset-uploader-api",
   ":modules:lib-gmm",
-  ":modules:lib-gmm-rewriter",
+//  ":modules:lib-gmm-rewriter",
   ":modules:maven-plugin-publisher",
   ":modules:maven-plugin-repository",
 )

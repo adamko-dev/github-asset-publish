@@ -2,6 +2,8 @@
 
 package dev.adamko.githubassetpublish.lib.internal.model
 
+import java.nio.file.Path
+import kotlin.io.path.inputStream
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 
@@ -238,5 +240,17 @@ sealed interface GradleModuleMetadata {
     }
   }
 
-  companion object
+  companion object {
+    internal val json: Json =
+      Json {
+        prettyPrint = true
+        prettyPrintIndent = "  "
+      }
+
+    fun loadFrom(file: Path): GradleModuleMetadata {
+      file.inputStream().use { source ->
+        return json.decodeFromStream(MutableGradleModuleMetadata.Companion.serializer(), source)
+      }
+    }
+  }
 }

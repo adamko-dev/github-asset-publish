@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 package buildsrc
 
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -5,6 +7,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
   id("buildsrc.base")
   kotlin("jvm")
+  id("dev.adamko.dev-publish")
 }
 
 kotlin {
@@ -33,6 +36,6 @@ tasks.withType<JavaCompile>().configureEach {
   targetCompatibility = kotlin.compilerOptions.jvmTarget.get().target
 }
 
-tasks.withType<Test>().configureEach {
-  useJUnitPlatform()
+testing.suites.withType<JvmTestSuite>().configureEach {
+  useJUnitJupiter("6.0.1")
 }

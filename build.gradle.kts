@@ -4,7 +4,6 @@ plugins {
   `kotlin-dsl` apply false
 }
 
-
 tasks.updateDaemonJvm {
   languageVersion = JavaLanguageVersion.of(21)
 }

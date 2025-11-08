@@ -29,7 +29,7 @@ internal constructor(
    */
   @get:InputFiles
   @get:PathSensitive(RELATIVE)
-  abstract val sourceMavenRepositoryDir: DirectoryProperty
+  abstract val stagingMavenRepo: DirectoryProperty
 
   @get:Classpath
   abstract val runtimeClasspath: ConfigurableFileCollection
@@ -37,13 +37,13 @@ internal constructor(
   @TaskAction
   protected fun taskAction() {
     val arguments = mapOf(
-      "sourceMavenRepositoryDir" to sourceMavenRepositoryDir.get().asFile.invariantSeparatorsPath,
+      "sourceMavenRepositoryDir" to stagingMavenRepo.get().asFile.invariantSeparatorsPath,
       "destinationDir" to destinationDirectory.get().asFile.invariantSeparatorsPath,
     ).map { (key, value) -> "$key=$value" }
 
     execOps.javaexec { spec ->
       spec.mainClass.set("dev.adamko.githubassetpublish.lib.PrepareGitHubAssetsAction")
-      spec.classpath(createClasspath())
+      spec.classpath(runtimeClasspath)
       spec.args(arguments)
     }
 //    val repoDir = buildDirMavenDirectory.get().asFile.toPath()
@@ -58,7 +58,7 @@ internal constructor(
 //
 //    updateRelocatedFiles(destinationDir)
 
-    logger.lifecycle("[$path] outputDir:${destinationDirectory.get().asFile.invariantSeparatorsPath}")
+    logger.info("[$path] outputDir:${destinationDirectory.get().asFile.invariantSeparatorsPath}")
   }
 
 //  private fun buildTestHandle(

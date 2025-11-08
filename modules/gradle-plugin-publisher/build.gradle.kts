@@ -23,6 +23,48 @@ gradlePlugin {
   }
 }
 
+dependencies {
+  implementation(projects.modules.libAssetUploaderApi)
+
+//  devPublication(projects.modules.libGmmRewriter)
+  devPublication(projects.modules.libAssetUploader)
+  devPublication(projects.modules.libAssetUploaderApi)
+  devPublication(projects.modules.libGmm)
+}
+
+testing {
+  suites {
+    withType<JvmTestSuite>().configureEach {
+      targets.configureEach {
+        testTask.configure {
+          systemProperty("junit.jupiter.tempdir.cleanup.mode.default", "ON_SUCCESS")
+        }
+      }
+    }
+
+    val testIntegration by registering(JvmTestSuite::class) {
+      dependencies {
+        implementation(gradleTestKit())
+        implementation("org.junit.jupiter:junit-jupiter:6.0.1")
+        runtimeOnly("org.junit.platform:junit-platform-launcher")
+      }
+
+      targets.configureEach {
+        testTask.configure {
+          val devMavenRepo = devPublish.devMavenRepo
+          dependsOn(tasks.updateDevRepo)
+          jvmArgumentProviders.add {
+            listOf(
+              "-DdevMavenRepo=${devMavenRepo.get().asFile.invariantSeparatorsPath}"
+            )
+          }
+        }
+      }
+    }
+    tasks.check { dependsOn(testIntegration) }
+  }
+}
+
 
 //val prepareGitHubReleaseDependencies by configurations.dependencyScope("prepareGitHubReleaseDependencies") {
 //  defaultDependencies {
@@ -141,10 +183,10 @@ val generateBuildConstants by tasks.registering {
   outputs.dir(outputDir).withPropertyName("outputDir")
   outputs.cacheIf { true }
 
-  val libGmmRewriterCoords = providers.provider {
-    projects.modules.libGmmRewriter.run { "$group:$name:$version" }
-  }
-  inputs.property("libGmmRewriterCoords", libGmmRewriterCoords)
+//  val libGmmRewriterCoords = providers.provider {
+//    projects.modules.libGmmRewriter.run { "$group:$name:$version" }
+//  }
+//  inputs.property("libGmmRewriterCoords", libGmmRewriterCoords)
   val libAssetUploaderCoords = providers.provider {
     projects.modules.libAssetUploader.run { "$group:$name:$version" }
   }
@@ -165,10 +207,10 @@ val generateBuildConstants by tasks.registering {
         |package dev.adamko.githubassetpublish.internal
         |
         |internal object BuildConstants {
-        |  const val libGmmRewriterCoords: String = "${libGmmRewriterCoords.get()}"
         |  const val libAssetUploaderCoords: String = "${libAssetUploaderCoords.get()}"
         |}
         |""".trimMargin()
+//        |  const val libGmmRewriterCoords: String = "${libGmmRewriterCoords.get()}"
       )
     }
   }
