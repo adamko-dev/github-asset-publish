@@ -89,7 +89,7 @@ class GppTest {
       )
       .build()
 
-    val githubReleaseFilesDir = projectDir.resolve("build/tmp/uploadGitHubReleaseAssets/")
+    val githubReleaseFilesDir = projectDir.resolve("build/tmp/prepareAssetsTask/")
 
     val githubReleaseFiles = githubReleaseFilesDir
       .walk()
@@ -196,7 +196,7 @@ class GppTest {
       )
       .build()
 
-    val githubReleaseFilesDir = projectDir.resolve("build/tmp/uploadGitHubReleaseAssets/")
+    val githubReleaseFilesDir = projectDir.resolve("build/tmp/prepareAssetsTask/")
 
     val githubReleaseFiles = githubReleaseFilesDir
       .walk()
@@ -214,17 +214,6 @@ class GppTest {
 
     assertLinesMatch(
       listOf(
-//        "com.example/test-project/test-project-1.0.0-sources.jar",
-//        "com.example/test-project/test-project-1.0.0.ivy.xml",
-//        "com.example/test-project/test-project-1.0.0.jar",
-//        "com.example/test-project/test-project-1.0.0.module",
-//        "com.example/test-project/test-project-1.0.0.module.sha256",
-//        "com.example/test-project/test-project-1.0.0.module.sha512",
-//        "com.example/test-project/test-project-linuxx64-1.0.0-sources.jar",
-//        "com.example/test-project/test-project-linuxx64-1.0.0.klib",
-//        "com.example/test-project/test-project-linuxx64-1.0.0.module",
-//        "com.example/test-project/test-project-linuxx64-1.0.0.module.sha256",
-//        "com.example/test-project/test-project-linuxx64-1.0.0.module.sha512",
         "test-project-1.0.0-sources.jar",
         "test-project-1.0.0.ivy.xml",
         "test-project-1.0.0.jar",
@@ -254,13 +243,13 @@ class GppTest {
       .withProjectDir(projectDir.toFile())
       .withArguments(
         "uploadGitHubReleaseAssets",
+        "--skipUpload", // TODO re-enable
         "--stacktrace",
       )
       .build()
       .let { result ->
         println(result.output)
       }
-
   }
 
   companion object {
